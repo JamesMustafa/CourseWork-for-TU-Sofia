@@ -1,7 +1,7 @@
 ﻿using System;
 namespace CourseWork
 {
-    public class KeyboardInterface : IUserInterface 
+    public class KeyboardInterface : IUserInterface //не се използват
     {
 
         public void ProcessInput()

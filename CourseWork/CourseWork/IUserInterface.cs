@@ -1,7 +1,7 @@
 ﻿using System;
 namespace CourseWork
 {
-    public interface IUserInterface
+    public interface IUserInterface //не се използват
     {
         event EventHandler OnCheatPressed;
         event EventHandler OnExitPressed;

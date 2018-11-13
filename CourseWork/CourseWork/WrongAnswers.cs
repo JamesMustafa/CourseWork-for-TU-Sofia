@@ -5,9 +5,9 @@ namespace CourseWork
 {
     public class WrongAnswers
     {
-        public void BigMethod(int k)
-        {
-            switch(k)
+        public void BigMethod(int k) //Чрез цикли се изобразява бесило и човек на нея
+        {                            //като играчът има право на 5 грешки.
+            switch(k)                
             {
                 case 5:
                     {
@@ -15,7 +15,7 @@ namespace CourseWork
                         {
                             Console.SetCursorPosition(50, i);
                             Thread.Sleep(50);
-                            Console.Write("§");
+                            Console.Write("||");
                         }
                         break;
                     }

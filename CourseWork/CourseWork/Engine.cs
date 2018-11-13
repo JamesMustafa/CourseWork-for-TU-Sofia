@@ -1,35 +1,39 @@
 ﻿using System;
 using System.Threading;
+using System.Collections.Generic;
 
 namespace CourseWork
 {
     public class Engine
     {
+        //----Инициализиране на конзолата----
         public const int WordRow = 3;
-        public int counter = 0; 
         public int WordPlace = Console.WindowWidth / 2;
+        //----Инициализиране на класове----
         public Level Level;
         public Cheat cheat;
         public WrongAnswers wrongAnswers;
         public Random Random;
+        public IUserInterface UserInterface;
+        //----Инициализиране на променливи----
         public int NoValueCounter;
         public int SpaceCounter;
-        public int cheatIndexer = 0;
-        public IUserInterface UserInterface;
+        public int cheatIndexer;
         public int RandomNumber { get; set; }
         public int Indexer1 { get; set; }
         public int Indexer2 { get; set; }
-        public int Indexer3 { get; set; }
+        public int PointCounter { get; set; }
         public string Word { get; set; }
         public int CheatNumber { get; set; }
         public char[] NewWord { get; set; }
         public string Letter { get; set; }
         public char charLetter { get; set; }
         public char[] RealWord { get; set; }
-        public int i = 0;
         public bool IsThereWord;
-        public int WrongCounter = 5;
-        public int wrongest = 4;
+        public int WrongCounter;
+        public List<int> RandomController;
+        public int WrongAnswersForView;
+        public int counter;
 
 
         public Engine(Level level, IUserInterface userInterface)
@@ -44,14 +48,22 @@ namespace CourseWork
             this.CheatNumber = this.Level.CheatNumber;
             this.wrongAnswers = new WrongAnswers();
             this.RealWord = this.Word.ToCharArray();
+            this.RandomController = new List<int>();
+            this.RandomController.Add(RandomNumber);
             this.cheat = new Cheat(this);
             this.NoValueCounter = 0;
             this.SpaceCounter = 0;
+            this.cheatIndexer = 0;
             this.IsThereWord = false;
+            this.WrongCounter = 5;
+            this.WrongAnswersForView = 4;
+            this.counter = 0;
+            this.PointCounter = 0;
         }
 
-        public void WordPut()
-        {
+        public void WordPut() //метод, който служи за обратна връзка с играча.
+        {                     //Взима буквата която е подал и е изпраща към безкрайния игрови цикъл
+                              //Ако е жокер го преработва с метод от друг клас.
             Console.SetCursorPosition(10, 3);
             Console.Write("Моля въведете вашата буква:");
             this.Letter = Console.ReadLine();
@@ -60,40 +72,36 @@ namespace CourseWork
             Console.SetCursorPosition(10, 5);
             Console.WriteLine("(За изход натиснете 2)");
 
-    //      if(this.Letter == "1")
-    //      {
-    //           this.Letter = this.cheat.OnCheat(this.NewWord);
-    //      }
-            if(this.Letter == "2")
+            if (this.Letter == "1")
+            {
+                if (CheatNumber > 0)
+                {
+                    this.Letter = this.cheat.OnCheat();
+                }
+                else
+                {
+                    Console.SetCursorPosition(10, 8);
+                    Console.WriteLine("Вие нямате право на жокер !!!");
+                }
+            }
+            if (this.Letter == "2")
             {
                 this.Exit();
             }
-            if(this.Letter == "3")
-            {
-                Console.WriteLine(this.NoValueCounter);
-            }
         }
 
-        public void Exit()
+        public void Exit() //излиза от играта чрез exception.
         {
             this.Level.ExceptionButton();
-        }
-        public void NoFirstAndLastLetter()
-        {
-            if(RealWord[0] != char.Parse(this.Letter) &&
-               RealWord[RealWord.Length - 1] != char.Parse(this.Letter))
-            {
-
-            }
         }
 
         public void OnWrongAnswer()
         {
             Console.SetCursorPosition(10, 7);
-            Console.WriteLine("Въведохте грешна буква. Остават ви още {0} опити", wrongest);
-            wrongest--;
-            this.wrongAnswers.BigMethod(WrongCounter);
-            WrongCounter--;
+            Console.WriteLine("Въведохте грешна буква. Остават ви още {0} опити", WrongAnswersForView);
+            WrongAnswersForView--;
+            this.wrongAnswers.BigMethod(WrongCounter); //метод който е взет от друг клас и рисува
+            WrongCounter--;                            //бесеница с "for" цикли
             if (WrongCounter == 0)
             {
                 Console.WriteLine();
@@ -103,6 +111,28 @@ namespace CourseWork
                 this.Exit();
             }
         }
+        //проверява дали новата ни дума е била използвана и
+        //я изобразява ако не е.
+        public void NewWordMaker() //връща всички стойности и подава нова дума
+        {
+            for (int i = 0; i < 1; i++)
+            {
+                do
+                {
+                    RandomNumber = Random.Next(0, Level.TheWordsArray.Length - 1);
+                }
+                while (RandomController.Contains(RandomNumber));
+                RandomController.Add(RandomNumber);
+            }
+            this.Word = this.Level.TheWordsArray[this.RandomNumber];
+            this.RealWord = this.Word.ToCharArray();
+            this.Level.IsFilled = false;
+            this.WrongCounter = 5;
+            this.IsThereWord = false;
+            this.SpaceCounter = 0;
+            this.WrongAnswersForView = 4;
+        }
+
 
         public void TwoLettersControl() //прави проверки и ако има две еднакви букви на разл. места,
         {                               //поставя и двете.
@@ -111,7 +141,7 @@ namespace CourseWork
 
             //-------Проверки за буква само с една позиция -----------
 
-            if (Indexer1 == Indexer2 && Indexer1 != 0 && Indexer1 != this.RealWord.Length-1) //ако има един символ който е различен от първата и последната буква
+            if (Indexer1 == Indexer2 && Indexer1 != 0 && Indexer1 != this.RealWord.Length - 1) //ако има един символ който е различен от първата и последната буква
             {
                 if (this.NewWord[Indexer1] == '_') //проверява дали вече сме вмъкнали дадената буква и
                 {                                  //ако я има ни дава грешка,ако не - поставя я където трябва.
@@ -120,13 +150,13 @@ namespace CourseWork
                 }
                 else this.OnWrongAnswer();
             }
-            else if(Indexer1 == Indexer2 && Indexer1 != 0 && Indexer1 == this.RealWord.Length - 1)
+            else if (Indexer1 == Indexer2 && Indexer1 != 0 && Indexer1 == this.RealWord.Length - 1)
             {
                 this.OnWrongAnswer(); //ако буквата се среща на последно място(където е видима) и никъде другаде, ни дава грешка.
             }
             //--------Проверки за букви с 2 позициии---------
-            else if((this.Indexer1 != this.RealWord.Length-1 ) //ако буквата се среща не само на последно но и на друго(празно) място, я поставя.
-                 && (this.Indexer2 == this.RealWord.Length-1))
+            else if ((this.Indexer1 != this.RealWord.Length - 1) //ако буквата се среща не само на последно но и на друго(празно) място, я поставя.
+                 && (this.Indexer2 == this.RealWord.Length - 1))
             {
                 if (this.NewWord[Indexer1] == '_')
                 {
@@ -146,7 +176,7 @@ namespace CourseWork
                 else this.OnWrongAnswer();
 
             }
-            else if(this.Indexer2 != this.RealWord.Length-1) //ако са две букви и не се срещат нито на първо нито на последно място, поставя и двете.
+            else if (this.Indexer2 != this.RealWord.Length - 1) //ако са две букви и не се срещат нито на първо нито на последно място, поставя и двете.
             {
                 if (this.NewWord[Indexer1] == '_' && this.NewWord[Indexer2] == '_')
                 {
@@ -159,7 +189,7 @@ namespace CourseWork
             }
         }
 
-        public void Render()
+        public void RenderWord() //метод за изобразяване на конзолата.
         {
 
             Console.SetCursorPosition(Console.WindowWidth / 2, 2);
@@ -169,6 +199,11 @@ namespace CourseWork
                 Console.Write(item);
             }
 
+        }
+        public void RenderPoints() //изобразява точките на играча
+        {
+            Console.SetCursorPosition(Console.WindowWidth / 2, 0);
+            Console.WriteLine("Точки: {0}",this.PointCounter);
         }
 
         public void MakeWordDifficult()
@@ -197,47 +232,42 @@ namespace CourseWork
             while (true)
             {
 
-                if (IsThereWord == false)
+                if (IsThereWord == false) //ако няма изписана дума я създава и я показва на конзолата
                 {
                     this.MakeWordDifficult();
-                    Render();
+                    RenderWord();
+                    RenderPoints();
                     this.IsThereWord = true;
                 }
                 Thread.Sleep(50);
 
-                if (Level.IsFilled == false)
+                if (Level.IsFilled == false) //докато думата не е попълнена
                 {
                     this.WordPut();
-                    if (this.Word.Contains(this.Letter))
+                    if (this.Word.Contains(this.Letter)) //проверява дали дадената буква я има
                     {
-                        NoFirstAndLastLetter();
-                        TwoLettersControl();
-                        this.Render();
+                        TwoLettersControl(); // проверка
+                        this.RenderWord();       //рисува думата на конзолата
+                        this.RenderPoints();
+                        this.cheat.Counter = 0;
 
-                        if (NoValueCounter < 0)
+                        if (NoValueCounter < 0) //ако думата е попълнена
                         {
                             this.Level.IsFilled = true;
                             Console.Clear();
                         }
 
-
                     }
-                    else if (this.Letter != "1" || this.Letter != "2")
-                    {
-                        this.OnWrongAnswer();
+                    else if(this.Letter != "1" || this.Letter == "2") //проверка дали буквата се съдържа
+                    {                                                 //в думата и ако я няма, и също така
+                        this.OnWrongAnswer();                         //е различна от 1 или 2, ни дава грешен отговор.
                     }
                 }
                 else
                 {
-                    this.RandomNumber = Random.Next(0, Level.TheWordsArray.Length - 1);
-                    this.Word = this.Level.TheWordsArray[this.RandomNumber];
-                    this.RealWord = this.Word.ToCharArray();
-                    this.Level.IsFilled = false;
-                    this.WrongCounter = 5;
-                    this.IsThereWord = false;
-                    this.SpaceCounter = 0;
+                    this.PointCounter++; //увеличава точките на играча
+                    this.NewWordMaker(); //метод който създава нова дума
                 }
-
             }
         }
     }

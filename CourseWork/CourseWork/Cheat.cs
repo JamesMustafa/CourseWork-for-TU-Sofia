@@ -14,39 +14,32 @@ namespace CourseWork
         public Cheat(Engine engine)
         {
             this.Engine = engine;
-            this.CheatNumber = engine.CheatNumber;
+            this.CheatNumber = engine.CheatNumber-1;
             this.OurWord = engine.Word;
             this.EditedWord = engine.NewWord;
             this.Counter = 0;
         }
 
-        public string OnCheat(char[] SomeEditedWord)
+        public string OnCheat()             //Чрез този метод с цикъл намираме на кой индекс се намира
+                                            //първата празна буква,виждаме стойността и от пълната дума
+                                            //и връщаме буквата която липсва.
         {
-            if (this.CheatNumber > 0)
-            {
-                Console.SetCursorPosition(10, 6);
+            Console.SetCursorPosition(10, 6);
                 Console.WriteLine("Остават Ви още {0} жокера", CheatNumber);
-                for (int i = 0; i < SomeEditedWord.Length - 1; i++)
+                for (int i = 0; i < Engine.NewWord.Length - 1; i++) 
                 {
-                    if (SomeEditedWord[i] == '_' && Counter == 0)
+                    if (Engine.NewWord[i] == '_' && Counter == 0)
                     {
                         FirstFoundIndexer = i;
                         Counter = 1;
 
                     }
                 }
-                FullCharLetter = OurWord[FirstFoundIndexer];
+                FullCharLetter = Engine.Word[FirstFoundIndexer];
                 FullStringLetter = this.FullCharLetter.ToString();
                 this.CheatNumber--;
-
-            }
-            else
-            {
-                Console.SetCursorPosition(10, 8);
-                Console.WriteLine("Вие нямате право на жокер !!!");
-                FullStringLetter = "_"; 
-            }
-            return FullStringLetter;
+                Engine.CheatNumber--;
+                return FullStringLetter;
         }
 
     }
