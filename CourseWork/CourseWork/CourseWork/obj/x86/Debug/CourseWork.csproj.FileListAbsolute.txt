@@ -1,0 +1,6 @@
+/Users/djemmustafa/Projects/CourseWork/CourseWork/obj/x86/Debug/CourseWork.csprojAssemblyReference.cache
+/Users/djemmustafa/Projects/CourseWork/CourseWork/obj/x86/Debug/CourseWork.csproj.CoreCompileInputs.cache
+/Users/djemmustafa/Projects/CourseWork/CourseWork/bin/Debug/CourseWork.exe
+/Users/djemmustafa/Projects/CourseWork/CourseWork/bin/Debug/CourseWork.pdb
+/Users/djemmustafa/Projects/CourseWork/CourseWork/obj/x86/Debug/CourseWork.exe
+/Users/djemmustafa/Projects/CourseWork/CourseWork/obj/x86/Debug/CourseWork.pdb
